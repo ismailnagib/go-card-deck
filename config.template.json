@@ -1,7 +1,7 @@
 {
-	"HandFileName": "hand.txt",
-	"HandDeckJoinSeparator": ",",
+  "HandFileName": "hand.txt",
+  "HandDeckJoinSeparator": ",",
   "NumberOfCardsToDeal": 10,
-	"NumberOfShuffleRounds": 10,
-	"DeckSaveFilePermission": "0666"
+  "NumberOfShuffleRounds": 10,
+  "DeckSaveFilePermission": "0666"
 }
