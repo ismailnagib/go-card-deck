@@ -11,7 +11,7 @@ func main() {
 	previousHand := stringToDeck(string(data), config.HandDeckJoinSeparator)
 
 	if len(previousHand) > 0 {
-		println("=== PREV =========================")
+		println("=== PREVIOUS HAND ================")
 		previousHand.print()
 		println("==================================")
 	} else {
