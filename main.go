@@ -1,28 +1,44 @@
 package main
 
 func main() {
-	handFileName := "savedHand.txt"
-	handSeparator := ","
-	previousHand := readFromFile(handFileName)
+	config := getConfig()
+	data, _ := readFromFile(config.HandFileName)
+
+	if len(config.HandDeckJoinSeparator) < 1 {
+		config.HandDeckJoinSeparator = ","
+	}
+
+	previousHand := stringToDeck(string(data), config.HandDeckJoinSeparator)
 
 	if len(previousHand) > 0 {
 		println("=== PREV =========================")
-		stringToDeck(previousHand, handSeparator).print()
+		previousHand.print()
 		println("==================================")
 	} else {
 		println("There is not a previous hand.")
 	}
 
 	cards := newDeck()
-	hand, _ := cards.deal(5)
+	hand, _ := deal(cards, config.NumberOfCardsToDeal)
 
 	println()
 	println("=== HAND =========================")
 	hand.print()
 	println("==================================")
+
 	println()
+	if len(config.HandFileName) < 1 {
+		println("The hand was not saved because no filename was set on the configuration file (config.json).")
+	} else {
+		hand.save(config.HandFileName, config.HandDeckJoinSeparator)
+		println("The hand was successfully saved.")
+	}
 
-	println(hand.saveToFile(handFileName, handSeparator))
-
-	hand.shuffle(3)
+	shuffled := shuffle(hand, config.NumberOfShuffleRounds)
+	for i, hand := range shuffled {
+		println()
+		println("=== SHUFFLE ROUND", i+1, "==============")
+		hand.print()
+		println("==================================")
+	}
 }

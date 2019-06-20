@@ -31,16 +31,16 @@ func TestNewDeck(t *testing.T) {
 }
 
 func TestDeckSaveToFileAndReadFromFile(t *testing.T) {
-	filename := "deckTesting.txt"
-	fileSeparator := ","
+	filename := "_testingDeck.txt"
+	deckJoinSeparator := ","
 
 	os.Remove(filename)
 
 	d := newDeck()
-	d.saveToFile(filename, fileSeparator)
+	d.save(filename, deckJoinSeparator)
 
-	savedString := readFromFile(filename)
-	savedDeck := stringToDeck(savedString, fileSeparator)
+	data, _ := readFromFile(filename)
+	savedDeck := stringToDeck(string(data), deckJoinSeparator)
 
 	if len(savedDeck) != len(d) {
 		t.Error("Expected saved deck length (" + strconv.Itoa(len(savedDeck)) + ") to be equal with original deck length (" + strconv.Itoa(len(d)) + ")")

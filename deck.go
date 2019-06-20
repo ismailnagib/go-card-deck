@@ -1,9 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
 	"math/rand"
-	"os"
 	"strings"
 	"time"
 )
@@ -38,21 +36,16 @@ func newDeck() deck {
 	return cards
 }
 
-func readFromFile(filename string) string {
-	content, error := ioutil.ReadFile(filename)
-
-	if error != nil {
-		println("Error: " + error.Error())
-		os.Exit(1)
-	}
-
-	data := string(content)
-	return data
+func deckToString(d deck, sep string) string {
+	return strings.Join([]string(d), sep)
 }
 
-func stringToDeck(str string, sep string) deck {
-	arrOfStr := strings.Split(str, sep)
-	return deck(arrOfStr)
+func stringToDeck(s string, sep string) deck {
+	if len(s) < 1 {
+		return make(deck, 0)
+	}
+
+	return deck(strings.Split(s, sep))
 }
 
 func (d deck) print() {
@@ -61,7 +54,17 @@ func (d deck) print() {
 	}
 }
 
-func (d deck) deal(size int) (deck, deck) {
+func (d deck) save(filename string, sep string) {
+	config := getConfig()
+	data := []byte(deckToString(d, sep))
+	permission, error := getFilePermission(config.DeckSaveFilePermission)
+
+	checkError("deck.save", error)
+
+	saveToFile(filename, data, permission)
+}
+
+func deal(d deck, size int) (deck, deck) {
 	validSize := size
 	deckLen := len(d)
 
@@ -77,22 +80,10 @@ func (d deck) deal(size int) (deck, deck) {
 	return d[start:stop], rest
 }
 
-func (d deck) saveToFile(filename string, sep string) string {
-	arrOfStr := []string(d)
-	str := strings.Join(arrOfStr, sep)
-	arrOfByte := []byte(str)
-	error := ioutil.WriteFile(filename, arrOfByte, 0666)
-
-	if error != nil {
-		return "Error: " + error.Error()
-	}
-
-	return "The hand was successfully saved."
-}
-
-func (d deck) shuffle(round int) deck {
+func shuffle(d deck, round int) []deck {
 	length := len(d)
 	result := append(deck(nil), d...)
+	results := make([]deck, round)
 
 	for i := 0; i < round; i++ {
 		previousResult := append(deck(nil), result...)
@@ -108,11 +99,8 @@ func (d deck) shuffle(round int) deck {
 			result[newIndex], result[j] = result[j], result[newIndex]
 		}
 
-		println()
-		println("=== HAND ========================= SHUFFLE", i+1)
-		result.print()
-		println("==================================")
+		results[i] = append(deck(nil), result...)
 	}
 
-	return result
+	return results
 }
