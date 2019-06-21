@@ -6,7 +6,12 @@ import (
   "time"
 )
 
-type deck []string
+type card struct {
+  Suit  string
+  Value string
+}
+
+type deck []card
 
 func newDeck() deck {
   cards := deck{}
@@ -19,8 +24,11 @@ func newDeck() deck {
     rand.Seed(time.Now().UnixNano())
     suitIndex := rand.Intn(suitLen)
     valueIndex := rand.Intn(valueLen)
-    newCard := cardValues[valueIndex] + " of " + cardSuits[suitIndex]
     uniqueCard := true
+    newCard := card{
+      Suit: cardSuits[suitIndex],
+      Value: cardValues[valueIndex],
+    }
 
     for _, card := range cards {
       if card == newCard {
@@ -36,8 +44,31 @@ func newDeck() deck {
   return cards
 }
 
+func newStringFromCard(c card) string {
+  return c.Value + " of " + c.Suit
+}
+
+func newCardFromString(s string) card {
+  slice := strings.Split(s, " of ")
+  
+  if (len(slice) < 2) {
+    throwError("newCardFromString - Error: invalid string input")
+  }
+
+  return card{
+    Suit: slice[1],
+    Value: slice[0],
+  }
+}
+
 func deckToString(d deck, sep string) string {
-  return strings.Join([]string(d), sep)
+  slice := []string(nil)
+
+  for _, card := range d {
+    slice = append(slice, newStringFromCard(card)) 
+  }
+
+  return strings.Join(slice, sep)
 }
 
 func stringToDeck(s string, sep string) deck {
@@ -45,12 +76,19 @@ func stringToDeck(s string, sep string) deck {
     return make(deck, 0)
   }
 
-  return deck(strings.Split(s, sep))
+  slice := strings.Split(s, sep)
+  d := deck(nil)
+
+  for _, card := range slice {
+    d = append(d, newCardFromString(card))
+  }
+
+  return d
 }
 
 func (d deck) print() {
   for i, card := range d {
-    println(i+1, card)
+    println(i+1, newStringFromCard(card))
   }
 }
 

@@ -8,3 +8,8 @@ func checkError(funcName string, err error) {
     os.Exit(1)
   }
 }
+
+func throwError(err string) {
+  println(err)
+  os.Exit(1)
+}
