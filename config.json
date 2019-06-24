@@ -1,0 +1,7 @@
+{
+	"HandFileName": "savedHand.txt",
+	"HandDeckJoinSeparator": ",",
+  "NumberOfCardsToDeal": 5,
+	"NumberOfShuffleRounds": 5,
+	"DeckSaveFilePermission": "0666"
+}
